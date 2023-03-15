@@ -1,7 +1,9 @@
 class SessionsController < ActionController::Base
+    skip_before_action :verify_authenticity_token
+
     def create
         # find user by email and authenticate their password
-        user = User.find_by(email: params["user"]["email"]).try(:authenticate, params["user"]["password"])
+        user = User.find_by(email: params[:session][:email]).try(:authenticate, params[:session][:password])
 
         # if user === true, store user_id in their browser as cookies
         if user
@@ -16,7 +18,7 @@ class SessionsController < ActionController::Base
             # if user isn't authenticated, render status 401
         else
             render json: {
-                status : 401
+                status: 401
             }
         end
     end
